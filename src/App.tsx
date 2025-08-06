@@ -1,25 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense } from 'react';
+import { Outlet } from 'react-router-dom';
+import { createTheme, ThemeProvider, Box } from '@mui/material';
+import Header from './navigations/Header';
+import Footer from './navigations/Footer';
+import Body from './navigations/Body';
+
+// Create a theme instance
+const theme = createTheme();
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        minHeight: '100vh',
+        paddingBottom: '56px' // Height of the BottomNavigation
+      }}>
+        <Header />
+        <Body />
+        <Footer />
+      </div>
+    </ThemeProvider>
   );
 }
 
