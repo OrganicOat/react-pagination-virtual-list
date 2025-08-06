@@ -1,15 +1,16 @@
 import { Box } from "@mui/material";
-import { Suspense } from "react";
+import { memo, Suspense } from "react";
 import { Outlet } from "react-router-dom";
+import LoadingSpinner from '../components/element/LoadingSpinner'
 
-export default function Body() {
+const Body = () => {
   return (
-  <div style={{ flex: 1, overflowY: 'auto' }}>
-    <Suspense fallback={<div>Loading...</div>}>
-      <Box sx={{ p: 2 }}>
-        <Outlet />
-      </Box>
+  <Box>
+    <Suspense fallback={<LoadingSpinner />}>
+      <Outlet />
     </Suspense>
-  </div>
+  </Box>
   )
 }
+
+export default memo(Body);

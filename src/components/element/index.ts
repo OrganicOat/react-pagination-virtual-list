@@ -1,1 +1,1 @@
-export { default as Pagination } from './PaginationList';
+export { default as LoadingSpinner } from './LoadingSpinner';

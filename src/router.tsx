@@ -2,7 +2,6 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { lazy } from 'react';
 import App from './App';
 
-// Lazy load the page components for better performance
 const TrendingPage = lazy(() => import('./pages/Trending'));
 const SettingsPage = lazy(() => import('./pages/Settings'));
 
@@ -12,7 +11,7 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        index: true, // 代表 path: '/'
+        index: true,
         element: <Navigate to="/trending" replace />,
       },
 
@@ -23,6 +22,10 @@ const router = createBrowserRouter([
       {
         path: "/settings",
         element: <SettingsPage />,
+      },
+      {
+        path: '*',
+        element: <Navigate to="/trending" replace />,
       },
     ]
  }
