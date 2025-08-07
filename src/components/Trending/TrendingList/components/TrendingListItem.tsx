@@ -19,38 +19,64 @@ const TrendingListItem = ({
   data,
 }: Props) => {
   return (
-      <ListItem>
-        <ListItemText
-          primary={
-            <Typography variant="h6" fontWeight="bold">
-              {data?.name || ''}
+    <ListItem>
+      <ListItemText
+        primary={
+          <Typography variant="h6" fontWeight="bold">
+            {data?.name || ''}
+          </Typography>
+        }
+        secondary={
+          <div className="baby">
+            <Typography
+              component="span"
+              variant="body2"
+              color="text.primary"
+            >
+              {data?.description || '--'}
             </Typography>
-          }
-          secondary={
-            <>
-              <Typography
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                {data?.description || '--'}
-              </Typography>
-              <Box display="flex" justifyItems="center" justifyContent="space-between" mt={1}>
-                <Box display="flex" alignItems="center">
-                  <Avatar alt="TensorFlow" src={data?.owner?.avatar_url} sx={{ width: 24, height: 24 }} />
-                  <Typography variant="body2" color="black" ml={0.5}>{data?.full_name || ''}</Typography>
-                </Box>
-                <Box display="flex" alignItems="center">
-                  <StarIcon fontSize="small" style={{ color: 'black' }} />
-                  <Typography variant="body2" color="black" ml={0.5}>
-                    {displayAbbreviateNumber(data?.stargazers_count)}
-                  </Typography>
-                </Box>
+            <Box
+              component="div"
+              display="flex"
+              justifyContent="space-between"
+              mt={1}
+            >
+              <Box component="div" display="flex" alignItems="center">
+                <Avatar
+                  alt={data?.owner?.login || 'Owner'}
+                  src={data?.owner?.avatar_url}
+                  sx={{ width: 24, height: 24 }}
+                />
+                <Typography
+                  component="span"
+                  variant="body2"
+                  color="text.secondary"
+                  ml={0.5}
+                >
+                  {data?.full_name || ''}
+                </Typography>
               </Box>
-            </>
-          }
-        />
-      </ListItem>
+              <Box component="div" display="flex" alignItems="center">
+                <StarIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                <Typography
+                  component="span"
+                  variant="body2"
+                  color="text.secondary"
+                  ml={0.5}
+                >
+                  {displayAbbreviateNumber(data?.stargazers_count)}
+                </Typography>
+              </Box>
+            </Box>
+          </div>
+        }
+        slotProps={{
+          secondary: {
+            component: 'span',
+          },
+        }}
+      />
+    </ListItem>
   )
 }
 

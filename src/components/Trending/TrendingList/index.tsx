@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Box, List, Divider } from '@mui/material';
 import dayjs from 'dayjs';
 import axios from 'axios';
@@ -10,47 +10,55 @@ import TrendingListItem from './components/TrendingListItem';
 const createdDate = dayjs().subtract(10, 'day').format('YYYY-MM-DD');
 
 const TrendingList = () => {
+  const isFetchingRef = useRef(false);
   const lastItemRef = useRef<HTMLDivElement | null>(null);
   
   const [loading, setLoading] = useState(false);
   const [trendingList, setTrendingList] = useState<ITrendingItem[]>([]);
   const [paginationOption, setPaginationOption] = useState({ page: 1, hasMore: true });
 
-  const fetchData = async (page: number) => {
-    setLoading(true);
-    let totalTrendingList = [];
-    let newPaginationOption = { page, hasMore: paginationOption.hasMore };
+  const fetchData = useCallback(
+    async (page: number) => { 
+      if (isFetchingRef.current) return;
+      isFetchingRef.current = true;
+      setLoading(true);
+      let totalTrendingList = [];
+      let newPaginationOption = { page, hasMore: paginationOption.hasMore };
 
-    try {
-      const response = await axios.get<GitHubSearchResponse>('https://api.github.com/search/repositories', {
-        params: {
-          q: `created:>${createdDate}`,
-          sort: 'stars',
-          order: 'desc',
-          page,
-        },
-      });
-  
-      const { total_count, items: newTrendingList } = response.data;
-      totalTrendingList = page === 1 ? newTrendingList : [...trendingList, ...newTrendingList];
-      newPaginationOption.hasMore = total_count > totalTrendingList.length;
+      try {
+        const response = await axios.get<GitHubSearchResponse>('https://api.github.com/search/repositories', {
+          params: {
+            q: `created:>${createdDate}`,
+            sort: 'stars',
+            order: 'desc',
+            page,
+          },
+        });
+    
+        const { total_count, items: newTrendingList } = response.data;
+        totalTrendingList = page === 1 ? newTrendingList : [...trendingList, ...newTrendingList];
+        newPaginationOption.hasMore = total_count > totalTrendingList.length;
 
-    } catch (err: any) {
-      alert(err?.message || 'Please contact our IT Support.');
-      newPaginationOption.hasMore = false;
-    } finally {
-      setLoading(false);
-      setTrendingList(totalTrendingList);
-      setPaginationOption(newPaginationOption);
-    }
-  };
+      } catch (err: any) {
+        alert(err?.message || 'Please contact our IT Support.');
+        newPaginationOption.hasMore = false;
+      } finally {
+        isFetchingRef.current = false;
+        setLoading(false);
+        setTrendingList(totalTrendingList);
+        setPaginationOption(newPaginationOption);
+      }
+    }, [trendingList, paginationOption, setLoading, setTrendingList, setPaginationOption]
+  );
 
   useMount(() => {
     fetchData(1);
   });
   
   useEffect(() => {
-    if (!lastItemRef.current) return;
+    const target = lastItemRef.current;
+  
+    if (!target) return;
   
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -66,12 +74,12 @@ const TrendingList = () => {
       }
     );
   
-    observer.observe(lastItemRef.current);
+    observer.observe(target);
   
     return () => {
-      if (lastItemRef.current) observer.unobserve(lastItemRef.current);
+      if (target) observer.unobserve(target);
     };
-  }, [loading, paginationOption.hasMore]);
+  }, [loading, paginationOption.hasMore, paginationOption.page, fetchData]);  
   
   return (
     <List>
