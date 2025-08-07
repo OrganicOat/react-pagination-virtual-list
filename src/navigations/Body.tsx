@@ -13,4 +13,4 @@ const Body = () => {
   )
 }
 
-export default memo(Body);
+export default Body;

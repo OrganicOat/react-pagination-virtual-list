@@ -80,4 +80,17 @@ const TrendingListItem = ({
   )
 }
 
-export default memo(TrendingListItem);
+export default memo(TrendingListItem, (prev, next) => {
+  const prevData = prev.data;
+  const nextData = next.data;
+
+  return (
+    prevData.id === nextData.id &&
+    prevData.name === nextData.name &&
+    prevData.full_name === nextData.full_name &&
+    prevData.description === nextData.description &&
+    prevData.owner?.login === nextData.owner?.login &&
+    prevData.stargazers_count === nextData.stargazers_count &&
+    prevData.owner?.avatar_url === nextData.owner?.avatar_url
+  );
+});
